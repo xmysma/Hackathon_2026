@@ -36,5 +36,27 @@ export const useStatsStore = defineStore('stats', () => {
     return stats.value[colIndex] ?? { goals: null, goalsConceded: null, duelsWon: null }
   }
 
-  return { stats, setStat, getStat }
+  const DEMO_RESULTS: MatchStat[] = [
+    { goals: 3, goalsConceded: 1, duelsWon: 14 },
+    { goals: 2, goalsConceded: 0, duelsWon: 11 },
+    { goals: 1, goalsConceded: 2, duelsWon: 8  },
+    { goals: 4, goalsConceded: 1, duelsWon: 15 },
+    { goals: 2, goalsConceded: 2, duelsWon: 10 },
+    { goals: 1, goalsConceded: 0, duelsWon: 12 },
+    { goals: 0, goalsConceded: 3, duelsWon: 6  },
+    { goals: 3, goalsConceded: 2, duelsWon: 13 },
+    { goals: 2, goalsConceded: 1, duelsWon: 9  },
+  ]
+
+  function seedDemoData(colIndices: number[]) {
+    colIndices.forEach((colIndex, i) => {
+      stats.value[colIndex] = { ...DEMO_RESULTS[i % DEMO_RESULTS.length] }
+    })
+  }
+
+  function clearAll() {
+    stats.value = {}
+  }
+
+  return { stats, setStat, getStat, seedDemoData, clearAll }
 })

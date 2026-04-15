@@ -29,6 +29,7 @@ function parseEvent(e: Record<string, string>): AllsvenskanMatch {
 
 export const useAllsvenskanStore = defineStore('allsvenskan', () => {
   const matches = ref<AllsvenskanMatch[]>([])
+  const teamBadges = ref<Record<string, string>>({})
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -66,5 +67,21 @@ export const useAllsvenskanStore = defineStore('allsvenskan', () => {
     }
   }
 
-  return { matches, loading, error, fetchMatches }
+  async function fetchTeamBadges() {
+    try {
+      const res = await fetch(
+        'https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=Allsvenskan'
+      )
+      const data = await res.json()
+      const map: Record<string, string> = {}
+      for (const t of data.teams ?? []) {
+        if (t.strTeam && t.strTeamBadge) map[t.strTeam] = t.strTeamBadge
+      }
+      teamBadges.value = map
+    } catch {
+      // ignorera – emblems är ej kritiska
+    }
+  }
+
+  return { matches, teamBadges, loading, error, fetchMatches, fetchTeamBadges }
 })

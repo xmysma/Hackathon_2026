@@ -213,7 +213,27 @@
           <i class="pi pi-times" aria-hidden="true" />
         </button>
         <div class="popup-badge" :style="{ background: ALLSVENSKAN_COLOR }">Allsvenskan</div>
-        <h3 class="popup-title">{{ selectedAllsvenskan.homeTeam }} vs {{ selectedAllsvenskan.awayTeam }}</h3>
+        <div class="allsvenskan-teams">
+          <div class="allsvenskan-team">
+            <img
+              v-if="allsvenskanStore.teamBadges[selectedAllsvenskan.homeTeam]"
+              :src="allsvenskanStore.teamBadges[selectedAllsvenskan.homeTeam]"
+              :alt="selectedAllsvenskan.homeTeam"
+              class="team-badge"
+            />
+            <span>{{ selectedAllsvenskan.homeTeam }}</span>
+          </div>
+          <span class="vs-sep">vs</span>
+          <div class="allsvenskan-team">
+            <img
+              v-if="allsvenskanStore.teamBadges[selectedAllsvenskan.awayTeam]"
+              :src="allsvenskanStore.teamBadges[selectedAllsvenskan.awayTeam]"
+              :alt="selectedAllsvenskan.awayTeam"
+              class="team-badge"
+            />
+            <span>{{ selectedAllsvenskan.awayTeam }}</span>
+          </div>
+        </div>
         <p class="popup-detail">
           <i class="pi pi-calendar" aria-hidden="true" />
           {{ new Date(selectedAllsvenskan.dateStr + 'T12:00:00').toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric', month: 'long' }) }}
@@ -317,6 +337,7 @@ function closeAllsvenskanDialog() { selectedAllsvenskan.value = null }
 onMounted(() => {
   wcStore.fetchMatches()
   allsvenskanStore.fetchMatches()
+  allsvenskanStore.fetchTeamBadges()
 })
 
 const LABELS: Record<ActivityType, string> = {
@@ -591,5 +612,40 @@ h2 {
   outline: 3px solid #1a3a6b;
   outline-offset: 1px;
   border-color: #1a3a6b;
+}
+
+/* Allsvenskan lagemblem */
+.allsvenskan-teams {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.allsvenskan-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 80px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  text-align: center;
+}
+
+.team-badge {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.vs-sep {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888;
+  flex-shrink: 0;
 }
 </style>
