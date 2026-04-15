@@ -1,0 +1,6 @@
+# Office temporära låsfiler
+~$*
+
+# Node
+node_modules/
+dist/
