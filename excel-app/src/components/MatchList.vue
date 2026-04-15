@@ -18,14 +18,14 @@
         v-for="match in matchesStore.upcomingMatches"
         :key="match.date.toISOString()"
         class="match-item"
-        :class="{ 'training-match': match.isTrainingMatch }"
+        :class="{ 'training-match': match.type === 'training-match' }"
       >
-        <article :aria-label="`${match.isTrainingMatch ? 'Träningsmatch' : 'Match'} mot ${match.opponent}, ${match.dayLabel}, ${match.time}`">
-          <header class="match-header">
+        <article :aria-label="`${match.type === 'training-match' ? 'Träningsmatch' : 'Match'} mot ${match.opponent}, ${match.dayLabel}, ${match.time}`">
+          <header class="match-header" :class="{ 'training-match-header': match.type === 'training-match' }">
             <span class="day-label">{{ match.dayLabel }}</span>
             <Tag
-              :value="match.isTrainingMatch ? 'Träningsmatch' : 'Match'"
-              :severity="match.isTrainingMatch ? 'secondary' : 'success'"
+              :value="match.type === 'training-match' ? 'Träningsmatch' : 'Match'"
+              :severity="match.type === 'training-match' ? 'secondary' : 'success'"
               aria-hidden="true"
             />
           </header>

@@ -7,43 +7,56 @@ const MONTHS: Record<string, number> = {
   jul: 6, aug: 7, sep: 8, okt: 9, nov: 10, dec: 11,
 }
 
-export interface Match {
+export type ActivityType = 'match' | 'training-match' | 'training'
+
+export interface Activity {
   date: Date
   dayLabel: string
   time: string
-  opponent: string
-  isTrainingMatch: boolean
+  title: string
+  opponent: string   // tom sträng för träningar
+  type: ActivityType
+  colIndex: number   // kolumnposition i rawSheet, används för närvaro
 }
 
-function parseActivityHeader(header: string, year: number): Match | null {
+// Bakgrundsfärg per typ (används i kalender och popup)
+export const ACTIVITY_COLOR: Record<ActivityType, string> = {
+  'match':          '#1a3a6b',
+  'training-match': '#5c3d8f',
+  'training':       '#1e6b45',
+}
+
+function classifyActivity(name: string): ActivityType {
+  if (name.startsWith('Match mot'))       return 'match'
+  if (name.startsWith('Träningsmatch mot')) return 'training-match'
+  return 'training'
+}
+
+function parseHeader(header: string, year: number, colIndex: number): Activity | null {
   const lines = header.split(/\r?\n/)
   if (lines.length < 3) return null
-
-  const activityName = lines[2].trim()
-  const isMatch = activityName.startsWith('Match mot')
-  const isTrainingMatch = activityName.startsWith('Träningsmatch mot')
-  if (!isMatch && !isTrainingMatch) return null
 
   const dateParts = lines[0].trim().split(' ')
   if (dateParts.length < 3) return null
 
   const day = parseInt(dateParts[1])
-  const monthStr = dateParts[2].toLowerCase()
-  const month = MONTHS[monthStr]
+  const month = MONTHS[dateParts[2].toLowerCase()]
   if (month === undefined || isNaN(day)) return null
 
-  const date = new Date(year, month, day)
-
-  const opponent = activityName
-    .replace(/^(Träningsmatch|Match) mot /, '')
-    .trim()
+  const name = lines[2].trim()
+  const type = classifyActivity(name)
+  const opponent = type !== 'training'
+    ? name.replace(/^(Träningsmatch|Match) mot /, '').trim()
+    : ''
 
   return {
-    date,
+    date: new Date(year, month, day),
     dayLabel: lines[0].trim(),
     time: lines[1].trim(),
+    title: name,
     opponent,
-    isTrainingMatch,
+    type,
+    colIndex,
   }
 }
 
@@ -51,8 +64,7 @@ export const useMatchesStore = defineStore('matches', () => {
   const excelStore = useExcelStore()
 
   const year = computed<number>(() => {
-    const raw = excelStore.rawSheet
-    for (const row of raw) {
+    for (const row of excelStore.rawSheet) {
       if (row[0] === 'Period' && row[1]) {
         const y = parseInt(String(row[1]))
         if (!isNaN(y)) return y
@@ -62,31 +74,27 @@ export const useMatchesStore = defineStore('matches', () => {
   })
 
   const headerRow = computed<string[]>(() => {
-    const raw = excelStore.rawSheet
-    for (const row of raw) {
+    for (const row of excelStore.rawSheet) {
       if (row[0] === 'Person') return row as string[]
     }
     return []
   })
 
-  const allMatches = computed<Match[]>(() => {
-    return headerRow.value
-      .map(h => parseActivityHeader(String(h), year.value))
-      .filter((m): m is Match => m !== null)
+  const allActivities = computed<Activity[]>(() =>
+    headerRow.value
+      .map((h, i) => parseHeader(String(h), year.value, i))
+      .filter((a): a is Activity => a !== null)
       .sort((a, b) => a.date.getTime() - b.date.getTime())
+  )
+
+  const allMatches = computed(() =>
+    allActivities.value.filter(a => a.type === 'match' || a.type === 'training-match')
+  )
+
+  const upcomingMatches = computed(() => {
+    const today = new Date(); today.setHours(0, 0, 0, 0)
+    return allMatches.value.filter(a => a.date >= today)
   })
 
-  const upcomingMatches = computed<Match[]>(() => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return allMatches.value.filter(m => m.date >= today)
-  })
-
-  const pastMatches = computed<Match[]>(() => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return allMatches.value.filter(m => m.date < today)
-  })
-
-  return { allMatches, upcomingMatches, pastMatches, year }
+  return { allActivities, allMatches, upcomingMatches, year }
 })

@@ -16,6 +16,14 @@
       />
       <Button
         v-if="store.fileName"
+        label="Statistik"
+        severity="info"
+        icon="pi pi-chart-bar"
+        aria-label="Visa matchstatistik"
+        @click="showStats = true"
+      />
+      <Button
+        v-if="store.fileName"
         label="Rensa data"
         severity="secondary"
         icon="pi pi-times"
@@ -29,10 +37,10 @@
       aria-atomic="true"
       class="status-region"
     >
-      <div v-if="store.fileName" class="file-info">
-        <Tag icon="pi pi-file-excel" :value="store.fileName" severity="success" />
-        <span>{{ store.rows.length }} rader inlästa</span>
-      </div>
+      <output v-if="store.fileName" class="file-info">
+        <i class="pi pi-file-excel" aria-hidden="true" />
+        <span>{{ store.fileName }} – {{ store.rows.length }} rader inlästa</span>
+      </output>
     </div>
 
     <div v-if="!store.fileName" class="empty-state" role="status">
@@ -41,17 +49,20 @@
     </div>
 
     <MatchCalendar />
+    <StatsPanel v-if="showStats" @close="showStats = false" />
   </main>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useExcelStore } from './stores/excelStore'
 import MatchCalendar from './components/MatchCalendar.vue'
+import StatsPanel from './components/StatsPanel.vue'
 import FileUpload from 'primevue/fileupload'
 import Button from 'primevue/button'
-import Tag from 'primevue/tag'
 
 const store = useExcelStore()
+const showStats = ref(false)
 
 function onFileSelect(event: { files: File[] }) {
   const file = event.files[0]
