@@ -5,13 +5,13 @@
 
   <main id="main-content">
     <section aria-labelledby="upload-heading" class="upload-section">
-      <h2 id="upload-heading" class="sr-only">Ladda upp fil</h2>
+      <h2 id="upload-heading" class="sr-only">Importera Excel-fil (valfritt)</h2>
       <FileUpload
         mode="basic"
         accept=".xlsx,.xls,.csv"
         :auto="true"
-        chooseLabel="Välj Excel-fil"
-        :chooseButtonProps="{ 'aria-label': 'Välj Excel-fil att ladda upp' }"
+        chooseLabel="Importera Excel-fil"
+        :chooseButtonProps="{ 'aria-label': 'Importera Excel-fil med lagdata (valfritt)' }"
         @select="onFileSelect"
       />
       <Button
@@ -41,11 +41,6 @@
         <i class="pi pi-file-excel" aria-hidden="true" />
         <span>{{ store.fileName }} – {{ store.rows.length }} rader inlästa</span>
       </output>
-    </div>
-
-    <div v-if="!store.fileName" class="empty-state" role="status">
-      <i class="pi pi-upload" aria-hidden="true" style="font-size: 3rem; color: #1a3a6b" />
-      <p>Ladda upp en Excel-fil för att komma igång</p>
     </div>
 
     <MatchCalendar />

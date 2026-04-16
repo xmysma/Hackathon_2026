@@ -1,24 +1,25 @@
 <template>
   <section
-    v-if="store.allActivities.length > 0"
     class="calendar-section"
     aria-labelledby="calendar-heading"
   >
-    <h2 id="calendar-heading">Kalender {{ store.year }}</h2>
+    <h2 id="calendar-heading">Kalender {{ store.allActivities.length > 0 ? store.year : new Date().getFullYear() }}</h2>
 
     <div class="legend" role="group" aria-label="Filtrera händelsetyper">
-      <button
-        v-for="(label, type) in LABELS"
-        :key="type"
-        class="legend-item"
-        :class="{ inactive: !activeFilters.has(type) }"
-        :aria-pressed="activeFilters.has(type)"
-        :aria-label="`${label} – ${activeFilters.has(type) ? 'visas' : 'dold'}, klicka för att växla`"
-        @click="toggleFilter(type)"
-      >
-        <span class="legend-dot" :style="{ background: ACTIVITY_COLOR[type] }" aria-hidden="true" />
-        {{ label }}
-      </button>
+      <template v-if="store.allActivities.length > 0">
+        <button
+          v-for="(label, type) in LABELS"
+          :key="type"
+          class="legend-item"
+          :class="{ inactive: !activeFilters.has(type) }"
+          :aria-pressed="activeFilters.has(type)"
+          :aria-label="`${label} – ${activeFilters.has(type) ? 'visas' : 'dold'}, klicka för att växla`"
+          @click="toggleFilter(type)"
+        >
+          <span class="legend-dot" :style="{ background: ACTIVITY_COLOR[type] }" aria-hidden="true" />
+          {{ label }}
+        </button>
+      </template>
       <button
         class="legend-item"
         :class="{ inactive: !activeFilters.has('wc') }"
