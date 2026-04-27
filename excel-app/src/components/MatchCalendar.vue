@@ -1,9 +1,11 @@
 <template>
-  <section
-    class="calendar-section"
-    aria-labelledby="calendar-heading"
-  >
-    <h2 id="calendar-heading">Kalender {{ store.allActivities.length > 0 ? store.year : new Date().getFullYear() }}</h2>
+  <section class="calendar-section" aria-labelledby="calendar-heading">
+    <h2 id="calendar-heading">
+      Kalender
+      {{
+        store.allActivities.length > 0 ? store.year : new Date().getFullYear()
+      }}
+    </h2>
 
     <div class="legend" role="group" aria-label="Filtrera händelsetyper">
       <template v-if="store.allActivities.length > 0">
@@ -16,7 +18,11 @@
           :aria-label="`${label} – ${activeFilters.has(type) ? 'visas' : 'dold'}, klicka för att växla`"
           @click="toggleFilter(type)"
         >
-          <span class="legend-dot" :style="{ background: ACTIVITY_COLOR[type] }" aria-hidden="true" />
+          <span
+            class="legend-dot"
+            :style="{ background: ACTIVITY_COLOR[type] }"
+            aria-hidden="true"
+          />
           {{ label }}
         </button>
       </template>
@@ -27,7 +33,11 @@
         aria-label="VM 2026 – Sverige, klicka för att växla"
         @click="toggleFilter('wc')"
       >
-        <span class="legend-dot" :style="{ background: WC_COLOR }" aria-hidden="true" />
+        <span
+          class="legend-dot"
+          :style="{ background: WC_COLOR }"
+          aria-hidden="true"
+        />
         VM 2026 – Sverige
       </button>
       <button
@@ -37,7 +47,11 @@
         aria-label="Allsvenskan 2026, klicka för att växla"
         @click="toggleFilter('allsvenskan')"
       >
-        <span class="legend-dot" :style="{ background: ALLSVENSKAN_COLOR }" aria-hidden="true" />
+        <span
+          class="legend-dot"
+          :style="{ background: ALLSVENSKAN_COLOR }"
+          aria-hidden="true"
+        />
         Allsvenskan 2026
       </button>
     </div>
@@ -51,7 +65,7 @@
       {{ allsvenskanStore.error }}
     </p>
 
-    <FullCalendar :options="calendarOptions" />
+    <FullCalendar ref="calendarRef" :options="calendarOptions" />
 
     <!-- Popup: lokal aktivitet -->
     <div
@@ -63,10 +77,18 @@
       @keydown.escape="closeDialog"
     >
       <div class="popup-inner">
-        <button ref="closeBtn" class="popup-close" aria-label="Stäng" @click="closeDialog">
+        <button
+          ref="closeBtn"
+          class="popup-close"
+          aria-label="Stäng"
+          @click="closeDialog"
+        >
           <i class="pi pi-times" aria-hidden="true" />
         </button>
-        <div class="popup-badge" :style="{ background: ACTIVITY_COLOR[selected.type] }">
+        <div
+          class="popup-badge"
+          :style="{ background: ACTIVITY_COLOR[selected.type] }"
+        >
           {{ LABELS[selected.type] }}
         </div>
         <h3 class="popup-title">
@@ -95,19 +117,26 @@
           <div class="attendance-stats">
             <div class="stat present">
               <i class="pi pi-check-circle" aria-hidden="true" />
-              <span class="stat-number">{{ attendanceList.filter(p => p.attended).length }}</span>
+              <span class="stat-number">{{
+                attendanceList.filter((p) => p.attended).length
+              }}</span>
               <span class="stat-label">Närvarande</span>
             </div>
             <div class="stat absent">
               <i class="pi pi-times-circle" aria-hidden="true" />
-              <span class="stat-number">{{ attendanceList.filter(p => !p.attended).length }}</span>
+              <span class="stat-number">{{
+                attendanceList.filter((p) => !p.attended).length
+              }}</span>
               <span class="stat-label">Frånvarande</span>
             </div>
           </div>
         </div>
 
         <!-- Statistikinmatning för matcher -->
-        <div v-if="selected.type === 'match' || selected.type === 'training-match'" class="match-stats-input">
+        <div
+          v-if="selected.type === 'match' || selected.type === 'training-match'"
+          class="match-stats-input"
+        >
           <h4 class="stats-heading">Matchstatistik</h4>
           <div class="stats-fields">
             <label class="stats-label" :for="`goals-${selected.colIndex}`">
@@ -123,9 +152,18 @@
               :value="statsStore.getStat(selected.colIndex).goals ?? ''"
               placeholder="–"
               aria-label="Antal mål gjorda"
-              @change="statsStore.setStat(selected.colIndex, 'goals', ($event.target as HTMLInputElement).valueAsNumber || null)"
+              @change="
+                statsStore.setStat(
+                  selected.colIndex,
+                  'goals',
+                  ($event.target as HTMLInputElement).valueAsNumber || null,
+                )
+              "
             />
-            <label class="stats-label" :for="`goals-conceded-${selected.colIndex}`">
+            <label
+              class="stats-label"
+              :for="`goals-conceded-${selected.colIndex}`"
+            >
               <i class="pi pi-circle" aria-hidden="true" />
               Mål insläppta
             </label>
@@ -138,7 +176,13 @@
               :value="statsStore.getStat(selected.colIndex).goalsConceded ?? ''"
               placeholder="–"
               aria-label="Antal mål insläppta"
-              @change="statsStore.setStat(selected.colIndex, 'goalsConceded', ($event.target as HTMLInputElement).valueAsNumber || null)"
+              @change="
+                statsStore.setStat(
+                  selected.colIndex,
+                  'goalsConceded',
+                  ($event.target as HTMLInputElement).valueAsNumber || null,
+                )
+              "
             />
             <label class="stats-label" :for="`duels-${selected.colIndex}`">
               <i class="pi pi-users" aria-hidden="true" />
@@ -153,7 +197,13 @@
               :value="statsStore.getStat(selected.colIndex).duelsWon ?? ''"
               placeholder="–"
               aria-label="Antal dueller vunna"
-              @change="statsStore.setStat(selected.colIndex, 'duelsWon', ($event.target as HTMLInputElement).valueAsNumber || null)"
+              @change="
+                statsStore.setStat(
+                  selected.colIndex,
+                  'duelsWon',
+                  ($event.target as HTMLInputElement).valueAsNumber || null,
+                )
+              "
             />
           </div>
         </div>
@@ -170,14 +220,25 @@
       @keydown.escape="closeWCDialog"
     >
       <div class="popup-inner">
-        <button ref="closeBtnWC" class="popup-close" aria-label="Stäng" @click="closeWCDialog">
+        <button
+          ref="closeBtnWC"
+          class="popup-close"
+          aria-label="Stäng"
+          @click="closeWCDialog"
+        >
           <i class="pi pi-times" aria-hidden="true" />
         </button>
         <div class="popup-badge" :style="{ background: WC_COLOR }">VM 2026</div>
         <h3 class="popup-title">Sverige mot {{ selectedWC.opponent }}</h3>
         <p class="popup-detail">
           <i class="pi pi-calendar" aria-hidden="true" />
-          {{ selectedWC.date.toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric', month: 'long' }) }}
+          {{
+            selectedWC.date.toLocaleDateString('sv-SE', {
+              weekday: 'short',
+              day: 'numeric',
+              month: 'long',
+            })
+          }}
         </p>
         <p class="popup-detail">
           <i class="pi pi-clock" aria-hidden="true" />
@@ -210,10 +271,17 @@
       @keydown.escape="closeAllsvenskanDialog"
     >
       <div class="popup-inner">
-        <button ref="closeBtnAllsvenskan" class="popup-close" aria-label="Stäng" @click="closeAllsvenskanDialog">
+        <button
+          ref="closeBtnAllsvenskan"
+          class="popup-close"
+          aria-label="Stäng"
+          @click="closeAllsvenskanDialog"
+        >
           <i class="pi pi-times" aria-hidden="true" />
         </button>
-        <div class="popup-badge" :style="{ background: ALLSVENSKAN_COLOR }">Allsvenskan</div>
+        <div class="popup-badge" :style="{ background: ALLSVENSKAN_COLOR }">
+          Allsvenskan
+        </div>
         <div class="allsvenskan-teams">
           <div class="allsvenskan-team">
             <img
@@ -237,7 +305,15 @@
         </div>
         <p class="popup-detail">
           <i class="pi pi-calendar" aria-hidden="true" />
-          {{ new Date(selectedAllsvenskan.dateStr + 'T12:00:00').toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric', month: 'long' }) }}
+          {{
+            new Date(
+              selectedAllsvenskan.dateStr + 'T12:00:00',
+            ).toLocaleDateString('sv-SE', {
+              weekday: 'short',
+              day: 'numeric',
+              month: 'long',
+            })
+          }}
         </p>
         <p class="popup-detail">
           <i class="pi pi-clock" aria-hidden="true" />
@@ -261,155 +337,207 @@
       </div>
     </div>
 
-    <div v-if="selected || selectedWC || selectedAllsvenskan" class="popup-backdrop" @click="closeDialog(); closeWCDialog(); closeAllsvenskanDialog()" aria-hidden="true" />
+    <div
+      v-if="selected || selectedWC || selectedAllsvenskan"
+      class="popup-backdrop"
+      @click="
+        closeDialog();
+        closeWCDialog();
+        closeAllsvenskanDialog();
+      "
+      aria-hidden="true"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, onMounted } from 'vue'
-import FullCalendar from '@fullcalendar/vue3'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import listPlugin from '@fullcalendar/list'
-import type { CalendarOptions, EventClickArg } from '@fullcalendar/core'
-import { useMatchesStore, ACTIVITY_COLOR } from '../stores/matchesStore'
-import type { Activity, ActivityType } from '../stores/matchesStore'
-import { useAttendanceStore } from '../stores/attendanceStore'
-import { useStatsStore } from '../stores/statsStore'
-import { useWCStore, WC_COLOR } from '../stores/wcStore'
-import type { WCMatch } from '../stores/wcStore'
-import { useAllsvenskanStore, ALLSVENSKAN_COLOR } from '../stores/allsvenskanStore'
-import type { AllsvenskanMatch } from '../stores/allsvenskanStore'
+import { computed, ref, watch, nextTick, onMounted } from 'vue';
+import FullCalendar from '@fullcalendar/vue3';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import listPlugin from '@fullcalendar/list';
+import type { CalendarOptions, EventClickArg } from '@fullcalendar/core';
+import { useMatchesStore, ACTIVITY_COLOR } from '../stores/matchesStore';
+import type { Activity, ActivityType } from '../stores/matchesStore';
+import { useAttendanceStore } from '../stores/attendanceStore';
+import { useStatsStore } from '../stores/statsStore';
+import { useWCStore, WC_COLOR } from '../stores/wcStore';
+import type { WCMatch } from '../stores/wcStore';
+import {
+  useAllsvenskanStore,
+  ALLSVENSKAN_COLOR,
+} from '../stores/allsvenskanStore';
+import type { AllsvenskanMatch } from '../stores/allsvenskanStore';
 
-const store = useMatchesStore()
-const attendanceStore = useAttendanceStore()
-const statsStore = useStatsStore()
-const wcStore = useWCStore()
-const allsvenskanStore = useAllsvenskanStore()
+const store = useMatchesStore();
+const attendanceStore = useAttendanceStore();
+const statsStore = useStatsStore();
+const wcStore = useWCStore();
+const allsvenskanStore = useAllsvenskanStore();
 
-const selected = ref<Activity | null>(null)
-const selectedWC = ref<WCMatch | null>(null)
-const selectedAllsvenskan = ref<AllsvenskanMatch | null>(null)
-const closeBtn = ref<HTMLButtonElement | null>(null)
-const closeBtnWC = ref<HTMLButtonElement | null>(null)
-const closeBtnAllsvenskan = ref<HTMLButtonElement | null>(null)
-let lastFocusedEl: HTMLElement | null = null
+const isMobile = ref(window.innerWidth < 768);
+const hasScrolledToToday = ref(false);
+const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null);
+
+const selected = ref<Activity | null>(null);
+const selectedWC = ref<WCMatch | null>(null);
+const selectedAllsvenskan = ref<AllsvenskanMatch | null>(null);
+const closeBtn = ref<HTMLButtonElement | null>(null);
+const closeBtnWC = ref<HTMLButtonElement | null>(null);
+const closeBtnAllsvenskan = ref<HTMLButtonElement | null>(null);
+let lastFocusedEl: HTMLElement | null = null;
 
 const attendanceList = computed(() =>
-  selected.value ? attendanceStore.getAttendance(selected.value.colIndex) : []
-)
+  selected.value ? attendanceStore.getAttendance(selected.value.colIndex) : [],
+);
 
 watch(selected, async (val) => {
   if (val) {
-    lastFocusedEl = document.activeElement as HTMLElement
-    await nextTick()
-    closeBtn.value?.focus()
+    lastFocusedEl = document.activeElement as HTMLElement;
+    await nextTick();
+    closeBtn.value?.focus();
   } else {
-    lastFocusedEl?.focus()
-    lastFocusedEl = null
+    lastFocusedEl?.focus();
+    lastFocusedEl = null;
   }
-})
+});
 
 watch(selectedWC, async (val) => {
   if (val) {
-    lastFocusedEl = document.activeElement as HTMLElement
-    await nextTick()
-    closeBtnWC.value?.focus()
+    lastFocusedEl = document.activeElement as HTMLElement;
+    await nextTick();
+    closeBtnWC.value?.focus();
   } else {
-    lastFocusedEl?.focus()
-    lastFocusedEl = null
+    lastFocusedEl?.focus();
+    lastFocusedEl = null;
   }
-})
+});
 
 watch(selectedAllsvenskan, async (val) => {
   if (val) {
-    lastFocusedEl = document.activeElement as HTMLElement
-    await nextTick()
-    closeBtnAllsvenskan.value?.focus()
+    lastFocusedEl = document.activeElement as HTMLElement;
+    await nextTick();
+    closeBtnAllsvenskan.value?.focus();
   } else {
-    lastFocusedEl?.focus()
-    lastFocusedEl = null
+    lastFocusedEl?.focus();
+    lastFocusedEl = null;
   }
-})
+});
 
-function closeDialog() { selected.value = null }
-function closeWCDialog() { selectedWC.value = null }
-function closeAllsvenskanDialog() { selectedAllsvenskan.value = null }
-
-onMounted(() => {
-  wcStore.fetchMatches()
-  allsvenskanStore.fetchMatches()
-  allsvenskanStore.fetchTeamBadges()
-})
-
-const LABELS: Record<ActivityType, string> = {
-  'match':          'Match',
-  'training-match': 'Träningsmatch',
-  'training':       'Träning',
+function closeDialog() {
+  selected.value = null;
+}
+function closeWCDialog() {
+  selectedWC.value = null;
+}
+function closeAllsvenskanDialog() {
+  selectedAllsvenskan.value = null;
 }
 
-type FilterKey = ActivityType | 'wc' | 'allsvenskan'
-const ALL_FILTERS: FilterKey[] = ['match', 'training-match', 'training', 'wc', 'allsvenskan']
-const activeFilters = ref<Set<FilterKey>>(new Set(ALL_FILTERS))
+function scrollToToday() {
+  if (!isMobile.value || hasScrolledToToday.value) return;
+  const todayStr = localDateStr(new Date());
+  const el = document.querySelector(`.fc-list-day[data-date="${todayStr}"]`);
+  if (el) {
+    el.scrollIntoView({ block: 'start' });
+    hasScrolledToToday.value = true;
+  } else {
+    // Scrolla till första kommande händelse
+    const firstEvent = document.querySelector('.fc-list-event');
+    if (firstEvent) {
+      firstEvent.scrollIntoView({ block: 'start' });
+      hasScrolledToToday.value = true;
+    }
+  }
+}
+
+onMounted(async () => {
+  // wcStore.fetchMatches()
+  allsvenskanStore.fetchMatches();
+  allsvenskanStore.fetchTeamBadges();
+  if (isMobile.value) {
+    await nextTick();
+    calendarRef.value?.getApi().changeView('listYear');
+  }
+});
+
+const LABELS: Record<ActivityType, string> = {
+  match: 'Match',
+  'training-match': 'Träningsmatch',
+  training: 'Träning',
+};
+
+type FilterKey = ActivityType | 'wc' | 'allsvenskan';
+const ALL_FILTERS: FilterKey[] = [
+  'match',
+  'training-match',
+  'training',
+  'wc',
+  'allsvenskan',
+];
+const activeFilters = ref<Set<FilterKey>>(new Set(ALL_FILTERS));
 
 function toggleFilter(key: FilterKey) {
-  const next = new Set(activeFilters.value)
-  if (next.has(key)) next.delete(key)
-  else next.add(key)
-  activeFilters.value = next
+  const next = new Set(activeFilters.value);
+  if (next.has(key)) next.delete(key);
+  else next.add(key);
+  activeFilters.value = next;
 }
 
 // Tidszonsäker datumformatering – undviker UTC-förskjutning från toISOString()
 function localDateStr(d: Date): string {
-  const yyyy = d.getFullYear()
-  const mm   = String(d.getMonth() + 1).padStart(2, '0')
-  const dd   = String(d.getDate()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}`
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 const events = computed(() => [
-  ...(activeFilters.value.has('match') || activeFilters.value.has('training-match') || activeFilters.value.has('training')
+  ...(activeFilters.value.has('match') ||
+  activeFilters.value.has('training-match') ||
+  activeFilters.value.has('training')
     ? store.allActivities
-        .filter(a => activeFilters.value.has(a.type))
-        .map(a => ({
+        .filter((a) => activeFilters.value.has(a.type))
+        .map((a) => ({
           title: a.opponent ? `mot ${a.opponent}` : a.title,
           start: localDateStr(a.date),
           backgroundColor: ACTIVITY_COLOR[a.type],
-          borderColor:     ACTIVITY_COLOR[a.type],
+          borderColor: ACTIVITY_COLOR[a.type],
           textColor: '#ffffff',
           extendedProps: { kind: 'local', activity: a },
         }))
     : []),
   ...(activeFilters.value.has('wc')
-    ? wcStore.matches.map(m => ({
+    ? wcStore.matches.map((m) => ({
         title: `🏆 Sverige vs ${m.opponent}`,
         start: localDateStr(m.date),
         backgroundColor: WC_COLOR,
-        borderColor:     WC_COLOR,
+        borderColor: WC_COLOR,
         textColor: '#ffffff',
         extendedProps: { kind: 'wc', match: m },
       }))
     : []),
   ...(activeFilters.value.has('allsvenskan')
-    ? allsvenskanStore.matches.map(m => ({
+    ? allsvenskanStore.matches.map((m) => ({
         title: `${m.homeTeam} vs ${m.awayTeam}`,
         start: m.dateStr,
         backgroundColor: ALLSVENSKAN_COLOR,
-        borderColor:     ALLSVENSKAN_COLOR,
+        borderColor: ALLSVENSKAN_COLOR,
         textColor: '#ffffff',
         extendedProps: { kind: 'allsvenskan', match: m },
       }))
     : []),
-])
+]);
 
 function onEventClick(arg: EventClickArg) {
-  lastFocusedEl = arg.el as HTMLElement
-  const kind = arg.event.extendedProps.kind
+  lastFocusedEl = arg.el as HTMLElement;
+  const kind = arg.event.extendedProps.kind;
   if (kind === 'wc') {
-    selectedWC.value = arg.event.extendedProps.match as WCMatch
+    selectedWC.value = arg.event.extendedProps.match as WCMatch;
   } else if (kind === 'allsvenskan') {
-    selectedAllsvenskan.value = arg.event.extendedProps.match as AllsvenskanMatch
+    selectedAllsvenskan.value = arg.event.extendedProps
+      .match as AllsvenskanMatch;
   } else {
-    selected.value = arg.event.extendedProps.activity as Activity
+    selected.value = arg.event.extendedProps.activity as Activity;
   }
 }
 
@@ -434,11 +562,14 @@ const calendarOptions = computed<CalendarOptions>(() => ({
   eventDisplay: 'block',
   height: 'auto',
   fixedWeekCount: false,
-}))
+  eventsSet: () => nextTick(scrollToToday),
+}));
 </script>
 
 <style scoped>
-.calendar-section { margin-top: 2rem; }
+.calendar-section {
+  margin-top: 2rem;
+}
 
 h2 {
   margin-bottom: 0.75rem;
@@ -465,7 +596,9 @@ h2 {
   border-radius: 6px;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
-  transition: opacity 0.15s, border-color 0.15s;
+  transition:
+    opacity 0.15s,
+    border-color 0.15s;
 }
 .legend-item:hover {
   border-color: #1a1a2e;
@@ -493,79 +626,172 @@ h2 {
   margin-bottom: 0.75rem;
 }
 
-:deep(.fc) { font-family: 'Segoe UI', system-ui, sans-serif; color: #1a1a2e; }
-:deep(.fc-toolbar-title) { font-size: 1.1rem; font-weight: 600; color: #1a1a2e; }
-:deep(.fc-button) {
-  background: #1a3a6b !important; border-color: #1a3a6b !important;
-  color: #ffffff !important; font-size: 0.85rem; border-radius: 4px !important;
+:deep(.fc) {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #1a1a2e;
 }
-:deep(.fc-button:hover) { background: #0f2347 !important; border-color: #0f2347 !important; }
-:deep(.fc-button:focus-visible) { outline: 3px solid #1a3a6b; outline-offset: 2px; }
-:deep(.fc-button-active) { background: #0f2347 !important; border-color: #0f2347 !important; }
-:deep(.fc-day-today) { background: #e8f0fe !important; }
-:deep(.fc-event) { cursor: pointer; border-radius: 3px; padding: 1px 4px; font-size: 0.8rem; }
-:deep(.fc-event:focus-visible) { outline: 3px solid #1a3a6b; outline-offset: 2px; }
-:deep(.fc-col-header-cell) { background: #f0f2f8; color: #1a1a2e; font-weight: 600; }
+:deep(.fc-toolbar-title) {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+:deep(.fc-button) {
+  background: #1a3a6b !important;
+  border-color: #1a3a6b !important;
+  color: #ffffff !important;
+  font-size: 0.85rem;
+  border-radius: 4px !important;
+}
+:deep(.fc-button:hover) {
+  background: #0f2347 !important;
+  border-color: #0f2347 !important;
+}
+:deep(.fc-button:focus-visible) {
+  outline: 3px solid #1a3a6b;
+  outline-offset: 2px;
+}
+:deep(.fc-button-active) {
+  background: #0f2347 !important;
+  border-color: #0f2347 !important;
+}
+:deep(.fc-day-today) {
+  background: #e8f0fe !important;
+}
+:deep(.fc-event) {
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 0.8rem;
+}
+:deep(.fc-event:focus-visible) {
+  outline: 3px solid #1a3a6b;
+  outline-offset: 2px;
+}
+:deep(.fc-col-header-cell) {
+  background: #f0f2f8;
+  color: #1a1a2e;
+  font-weight: 600;
+}
 
 .popup-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45); z-index: 100;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 100;
 }
 
 .activity-popup {
-  position: fixed; top: 50%; left: 50%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 101; width: min(360px, 90vw);
+  z-index: 101;
+  width: min(360px, 90vw);
 }
 
 .popup-inner {
-  background: #ffffff; border-radius: 10px;
+  background: #ffffff;
+  border-radius: 10px;
   padding: 1.5rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   position: relative;
 }
 
 .popup-close {
-  position: absolute; top: 0.75rem; right: 0.75rem;
-  background: none; border: none; cursor: pointer;
-  color: #2d2d4a; font-size: 1rem; padding: 0.25rem;
-  border-radius: 4px; line-height: 1;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #2d2d4a;
+  font-size: 1rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  line-height: 1;
 }
-.popup-close:hover { color: #1a1a2e; }
+.popup-close:hover {
+  color: #1a1a2e;
+}
 
 .popup-badge {
-  display: inline-block; color: #ffffff;
-  font-size: 0.75rem; font-weight: 600;
-  padding: 2px 8px; border-radius: 99px; margin-bottom: 0.6rem;
+  display: inline-block;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  margin-bottom: 0.6rem;
 }
 
 .popup-title {
-  margin: 0 0 0.75rem; font-size: 1.05rem;
-  color: #1a1a2e; padding-right: 1.5rem;
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  color: #1a1a2e;
+  padding-right: 1.5rem;
 }
 
 .popup-detail {
-  display: flex; align-items: center; gap: 0.5rem;
-  margin: 0 0 0.4rem; color: #2d2d4a; font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.4rem;
+  color: #2d2d4a;
+  font-size: 0.9rem;
 }
 
 .maps-link {
-  display: inline-flex; align-items: center; gap: 0.35rem;
-  margin-top: 0.75rem; font-size: 0.875rem; font-weight: 600;
-  color: #1a3a6b; text-decoration: underline; text-underline-offset: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a3a6b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
-.maps-link:hover { color: #0f2347; }
+.maps-link:hover {
+  color: #0f2347;
+}
 
-.attendance { margin-top: 1rem; border-top: 1px solid #e0e0e8; padding-top: 0.75rem; }
-.attendance-stats { display: flex; gap: 1rem; }
-.stat {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; gap: 0.2rem; padding: 0.75rem; border-radius: 8px;
+.attendance {
+  margin-top: 1rem;
+  border-top: 1px solid #e0e0e8;
+  padding-top: 0.75rem;
 }
-.stat.present { background: #eaf4ee; color: #1e6b45; }
-.stat.absent  { background: #fdeaea; color: #b91c1c; }
-.stat-number { font-size: 2rem; font-weight: 700; line-height: 1; }
-.stat-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.attendance-stats {
+  display: flex;
+  gap: 1rem;
+}
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+.stat.present {
+  background: #eaf4ee;
+  color: #1e6b45;
+}
+.stat.absent {
+  background: #fdeaea;
+  color: #b91c1c;
+}
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 
 /* Statistikinmatning */
 .match-stats-input {
